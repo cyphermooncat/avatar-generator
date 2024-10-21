@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprites Superposés avec Différentes Images</title>
+    <style>
+        .sprite-parent {
+        position: relative;
+        width: 380px; /* Agrandir à 10x la taille */
+        height: 380px;
+    }
+        .sprite-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: inline-block;
+            zoom: 10;
+        }
+
+        .sprite {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+            display: none;
+        }
+
+        .controls {
+            margin-top: 10px;
+        }
+
+        .frame-info {
+            display: inline-block;
+            vertical-align: top;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sprite-parent">  
+    <div id="sprites" class="sprite-container">
+        <div class="sprite" id="sprite1"></div>
+        <div class="sprite" id="sprite2"></div>
+        <div class="sprite" id="sprite3"></div>
+        <div class="sprite" id="sprite4"></div>
+        <div class="sprite" id="sprite5"></div>
+        <div class="sprite" id="sprite6"></div>
+    </div></div>
+
+    <div class="controls">
+        <button id="generateButton">Générer Satoshi</button>
+    </div>
+
+    <div id="frameInfo" class="frame-info"></div>
+
+    <script>
+        const sprites = document.querySelectorAll(".sprite");
+        const generateButton = document.getElementById("generateButton");
+        const saveButton = document.getElementById("saveButton");
+        const frameInfoDiv = document.getElementById("frameInfo");
+
+        const spriteBackgrounds = [
+            "url(data:image/png;base64,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)",
+            "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAAAmCAYAAAA4AlIkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJPSURBVHhe7dlNK0RRGAfwO2oWSjYsKBaKDyBDirLD1lgpdtbKS8knkPJSFlZ2lJWxxc5CiSsfgB3FwmxQFrO45jnOM849c4d77p370vj/6nQe94yc9O8552IBAAAAAAAAAAAAAAAAAAAAQFADA3ZWlgAAAA0uI2dfwh6Rt7e5kizhnzAKmGps0nZk+auL01zgnxHEa1evr321Pz3Eui+ncOXa10Z+WsyrhWMxs0x+ONZ9bTolx56ZE3Xu6EDMTH2+kskG2pfxN/kNli7qoDnXHT/7GnyWRQ03nbIo/wKGXqLdVzlY5/a2NZ5bsooLs+JZ2+6hK2Dqc/5s1EGjYMlS4DDp9NCZBq1JzsbuNtZk9Y2/plkdiSgHqNjd5znUcCXB7tmT1Q+vZ3GjIHmNsAJ3MA5P/+p6VU0zUeuoO5jfo1EX9VFJHexs501+5c/EYmvsHcwv0w4WOGBE7VBeoYozYK4j0kAcRyQFjELjB382qYAt33SLeWvwUcy62I5IwuGBv1FwuJNdTo2LmXCtrieJgsXh4rDxHESogHEHS0PQivmWQCMO1JHUDjZyci4rd61/LgkUpjCB0oUKGElLF2t7vP8ehY/qUWut/CwJ1LXoLZKG2s3SQO1gJGzY6vYWqaK139ajUHlT9OhSNdforTIho867GGmjdjAOmxo4U6Eu+Sb+8yVflpULvBd9rVHeIkMfkWCGL/P6SIt638EapoOl+e9gsqygu9d8V7Oo958+q/5dRNDBUka9uNe87PNQ1sGt3h0MAAAAAAAAACAVLOsLhxRxe5Hvq5QAAAAASUVORK5CYII=)",
+            "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAAAmCAYAAAA4AlIkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGDSURBVHhe7dehTsQwHMfxjQSDBYnkEU5gFlDHYRFTSCwoBOEBCAIFFomawHKcgswg7hGQSLAYxEhLy3WjXbu77RKW7ydpult3/2a3X7peBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgCZi1TcyTiaFOpRG+bBUxzfelffNrdK8G2+vpXl94125Kr7kvKfxau18ode15fE8lfPtXWS184VeZ7OieqATtQHL87zQTZ1aWBc1bWyr07JWrIp57rPT32aZnAHTAfh8uJGtLWa9tkO2fn3321xCrmnRIvfXi5AFvSKL/Ejuq3RTp4OZ3xW1+kbsnWxNDc/NVlM0NfwvOF8Z5gom1AXDt8k3xcmt7Nf2j2WfJIn3taU356GrTnyw7axZ3L8EP6CPk0PZ+16toQ89dJPvE/onYGc0LdV7ygbqaGZymQZt8odnmfo0s5tO1dGP5/HgTx3nCqYfvAiCDkMbzHoh4WqqLlyCb7wvzHCJYNnCJdiCU+W6plq3GugoiqJv0NTTuRwv0JkAAAAASUVORK5CYII=)",
+            "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAAAmCAYAAAA4AlIkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOaSURBVHhe7djPS5RBGAfweWtXO0go0iHSQ0jaL7JiI1D7YRAUVBIdgv6BTt0E6dR2CsFbp/6BoEOEFRhdtHKFSCk9WCZRYNGhIpWM1NXxfWZn8t3ZmXfnHfedNn0+8DLzzurLu7vffZ7ZJQghhBBCCKH1xeOjlUG6lfKpUps3u6bro/i1fEyFvofC0M5hq/fSOgDFwiW4CtmJM8OULN7nZ4aSl8izJ6kN+SEIC9bQy34+W9VytJ2N88u0eqRhZIadGLB6cU3DJbgIGQuYhTgCRm80Wd2LjndzoqT3aFq1dH7NLlSNNY/N8dNQkW88ariEuENWjgHz9gyzc1v0bYqNpQxYMFxhlUrIfMk9h9YduXsRpud+V47vH1/gp1qRblwOlx8aNvrrbBRC1mMLWQ9dpI/OjrL56+7rbDzUdYuNgrx+vq+ZdHrJWO4JQiYHrOfyFj4jpPPeHzaq1gQIWFzhMiHCRVr9f8t4BSEz2Zdt4qM1SgvvWbXm0syBp3yWT7fukh9odgSp1oR+SlYTGJPMt8/s0PLDZSvSf9q2R8FVBTMVZwUDqipmCqrXSHqiwm/gi3xpzVQVjAXryFdCXm1n563b6tgo6FokcFLBBGiLojWWG2iNoj3+S1WVHqmrKXzJYQ0ek5U6XB3XfhI4CvBwqUCw5HCJ6/jXnOdLWlYBixKkcggd7Lnk/ZgLsH8SG3Vwam+CnN6XIInAqw5zWIPHBLb3Sk+U7MMPMrXqShqsWHL1Ksa/ZgWfalk/CTk4sKHXbfY3MjlkoK0xQU7uzh0wD2J/C+HyiLONLAQrarhMWe/BguEJC1bwMX/dyR7MpB1CRYt7DxYE+7GOK6PkeONmvpLv+fsl0nu3mYXLiylc3eca2HV7b9ewc1uizfal6pMD6YEsO9GwDpigq1Jy6ICrgJlyGTAAIWu/+Iaf5WSXCPn0fZlMDR3OtcWYK5cuZA+PTfNZvgsvqvlsFQSs6/EHo9ctUotUBQSCpDpkcYbrfwHtsv/BQTLwLvv3GJzM5sIFv3c5bItBEK7aqUk2l0dd8ExF3oPZBAXDVT50ledH/S4WKnmUKb+FhrB+4/0qZfRpE+G6Q0nyagm/dsugRfJpJC5bpBD8fYx9Yyzhr/UmVG3StEVGaY9gTU+sWMiwcqlR6r/u6aZlmLsOlyBCBopt+oNVK0q4AAYA5YVNJWqoEEIIIYQQQgghhBBCCCGEEEIIIYQQQgitN4SsAK5vmTcli0B/AAAAAElFTkSuQmCC)",
+            "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAAAmCAYAAAA4AlIkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMHSURBVHhe7dgxaFNBGAfwqyCoQ7s4KCio6ODiomhBOoglNmaqIsTBzUEICIKog6MIQsGpIOjWwYBoptpaKg5VUNDFxUWsg1AHHZpBCx2i/8td+r33Lsm9yyVo+f/g497de/e9Nvl6d1QRERERERERERERERERERERERERERERbV5Dpk34sedgw1yqnd8+62fkmGXvtdNpjusdPsrlciZnWrVa7ZgvRo525scW2uaeWCp0zdnr/H9N5gc+VR1rfDi8TX0pLZsRpS5M7VZPrq+Y3oaQAkvnOjC7Xx39tKZelZe8PjwUR6VSMb2s6elprwLrNUc7KJAz14ZNL2no3GjXnI1nb50F9uJ+PUqBTazezOSfH7nXNW/ovC2mdUIxyIJAQcnQgx24nkcum3czQ0Gkw0fovDzO/7rSijxC5mUKDAWAFQUFgJUMEbMY0nnxLtfqGAIrj688z4bCiiPDDHcUMifE5V37dOQRMifzC9htzRaVXL30RY9i5HdtcbZgfLc2ew5z5cmzPZ79PZ7YOmbn7ui2VLytW3i+fTHXZydzXi3cUNhyZT7Im9PCVocVSBdK7Z0qnq6ZOxuw9bm2xLmXk0pNnlCPvn9VT3c88NoiE/DlS+jjTGZuR4OcrneZ212hOBBTjfVW2DHzSFcxcgCKAecmxOvGcOva9tMF6EPmtHlkG5LTQuE8XFlufuj2HYItLLQJ4lnMdxWgS8czGPgevvPoR85jj2fMlb+QOU7jo7o5WVvQLbyZLCT6QVJ5dWvGovi7GukwRj4WzFVTop961lemwH7uPWSuBifknbY43l+8pNte2ByhBVfaOt7cwsSXf3fteGZbywNzW3kNOxYDtjkb1uqR5B+E7Lue95EoMHkO6neh4V3yHbHOeIOGs5ANfPlYuSw7brreZE70Y+SUcH6SUazfaoUkx9NzguEsZMMM9U3ou+T5Sbbmtpd2OfLmkfTZqa509HJOkuR5LFbOQfovVw1wFULef47GyNFvKKrZ9UV9jRWy19WLiIiIiIiIiIiIYlPqD0vQZNXg5nR5AAAAAElFTkSuQmCC)",
+            "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAAAmCAYAAAA4AlIkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIcSURBVHhe7dg/UttAFMdxiQOkgYKChj9DcgiOAOQE0FLS0DLGQ5sL0OITAGnScwjCJNBQUEDDBZS89T6xFit5JT1NQvL9zGh2tZaeZPzzw6M8w+DWLrYLP0129/mr6WfztLIxcw9LDz/ycE32ZdS16r6oniP0uDoEbACxQP3cvfKz+dYvd/xsyjJsp+Oxu7fj0aisKWu6X309fE3Ezm+y4Mc+5IKxbVDF6GMhm9/tzbqeBCrc2mh7fBt1wdDghGJrIjVcIvnAiNQPo8813ihDcHLjhuzkkxvy8fdO17GuJ6SDhSHJ8zwriulldC6jiu0r6WZmHez80RU+vT/LjlcP3JLqtLa/PPe+mjqY3MzrO51Vtx7TVKNNnVcaBuHn2oHabu7kSD1rYYCUBEnDVB3N+XCZSqg5L4EDvdtSp2+mC0Y1CL7zWKz36V6iroNpyKpzpceFTDqYD8KXvcXsaPLslvqaqdXQydrcuFXY+v2xfosGTGhoUtXUGCpg4TwWpiEDFgvX9d6mn6XZmtz62VRZ0yhgf5WZkAXBSg1H+e9RBHX6hkt0eSzRZIiASbi28pdWda+LD0UYsn8/YIGuwbCqE5KAWf0wN6lV+a3UJVyqGjKnIWAWjyn+iDAIfUJhVQdx7zZgwjIQ/0O4vt0cuq1r9xJyrtZJ8a4DhkQJz6s6G7I2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAGCuLPsFiktj0tKYwnkAAAAASUVORK5CYII=)"
+        
+        ];
+
+        const frameNames = [
+            ["Blue Background", "Green Background", "Yellow Background", "Red Background"],
+            ["Small Body", "Medium Body", "Large Body", "Ultra Body"],
+            ["Short Legs", "Medium Legs", "Long Legs", "Gigantic Legs"],
+            ["Small Head", "Medium Head", "Large Head", "Ultra Head"],
+            ["Short Arms", "Medium Arms", "Long Arms", "Gigantic Arms"],
+            ["Simple Hat", "Medium Hat", "Large Hat", "Ultra Hat"]
+        ];
+
+        const frameProbabilities = [35, 35, 20, 10];
+
+        function getWeightedRandomFrame() {
+            const rand = Math.random() * 100;
+            let sum = 0;
+            for (let i = 0; i < frameProbabilities.length; i++) {
+                sum += frameProbabilities[i];
+                if (rand < sum) return i;
+            }
+            return 0; // fallback
+        }
+
+        function updateFrameInfo(framesChosen) {
+            const rarityMap = ["Commun", "Rare", "Épique", "Légendaire"];
+            const countFrame4 = framesChosen.filter(frame => frame === 3).length;
+            const rarity = rarityMap[Math.min(countFrame4, 3)];
+            frameInfoDiv.innerHTML = `
+                background : ${frameNames[0][framesChosen[0]]}<br>
+                corps : ${frameNames[1][framesChosen[1]]}<br>
+                jambes : ${frameNames[2][framesChosen[2]]}<br>
+                tete : ${frameNames[3][framesChosen[3]]}<br>
+                bras : ${frameNames[4][framesChosen[4]]}<br>
+                chapeau : ${frameNames[5][framesChosen[5]]}<br>
+                rareté : ${rarity}
+            `;
+        }
+
+        generateButton.addEventListener("click", () => {
+            const framesChosen = [];
+            sprites.forEach((sprite, index) => {
+                const frameIndex = getWeightedRandomFrame();
+                framesChosen.push(frameIndex);
+                const offsetX = frameIndex * -38;
+                sprite.style.backgroundImage = spriteBackgrounds[index];
+                sprite.style.backgroundPosition = `${offsetX}px 0`;
+                sprite.style.display = "block";
+            });
+            updateFrameInfo(framesChosen);
+        });
+    </script>
+
+</body>
+</html>
